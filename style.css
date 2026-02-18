@@ -921,7 +921,8 @@ body {
 .fifth__section__watermark {
   margin-top: 8rem;
   /* form 1920 to 1024 px 288 px to 156.6px  */
-  font-size: clamp(9.6rem, 0rem + 15vw, 18rem);
+  /* font-size: clamp(9.6rem, 0rem + 15vw, 18rem); */
+  font-size: 15rem;
   /* bottom: -2%; */
   filter: blur(0.7px);
   line-height: 0.8;
@@ -936,9 +937,12 @@ body {
 
   -webkit-background-clip: text;
   background-clip: text;
-
+text-align: center;
   color: transparent;
   white-space: nowrap;
+}
+.fifth__section__watermark p{
+  text-align: center;
 }
 
 @media (max-width: 1024px) {

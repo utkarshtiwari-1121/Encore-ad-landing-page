@@ -27,11 +27,17 @@ function initTextDistortionForElement(selector) {
     canvas.style.zIndex = "10";
 
     // Measure element BEFORE wrapping (while it's still in original position)
+    // Force a reflow to ensure accurate measurements
+    textElement.offsetHeight;
     const originalRect = textElement.getBoundingClientRect();
-    const originalDisplay = window.getComputedStyle(textElement).display;
-    const originalPosition = window.getComputedStyle(textElement).position;
+    const computedStyle = window.getComputedStyle(textElement);
+    const originalDisplay = computedStyle.display;
+    const originalPosition = computedStyle.position;
+    const originalWidth = computedStyle.width;
+    const originalHeight = computedStyle.height;
     
     // Set container size immediately to prevent layout shift
+    // Use actual rendered dimensions
     const containerWidth = originalRect.width || 0;
     const containerHeight = originalRect.height || 0;
     
@@ -47,6 +53,18 @@ function initTextDistortionForElement(selector) {
     container.appendChild(textElement);
     container.appendChild(canvas);
     
+    // Preserve ALL positioning and layout properties from original element
+    const originalLeft = computedStyle.left;
+    const originalRight = computedStyle.right;
+    const originalTop = computedStyle.top;
+    const originalBottom = computedStyle.bottom;
+    const originalTransform = computedStyle.transform;
+    const originalMargin = computedStyle.margin;
+    const originalMarginTop = computedStyle.marginTop;
+    const originalMarginRight = computedStyle.marginRight;
+    const originalMarginBottom = computedStyle.marginBottom;
+    const originalMarginLeft = computedStyle.marginLeft;
+    
     // Preserve original element's display and positioning
     if (originalDisplay && originalDisplay !== 'inline' && originalDisplay !== 'inline-block') {
         container.style.display = originalDisplay;
@@ -55,11 +73,43 @@ function initTextDistortionForElement(selector) {
         container.style.position = originalPosition;
     }
     
-    // Set container size
-    if (containerWidth > 0 && containerHeight > 0) {
+    // Preserve all positioning properties
+    if (originalLeft && originalLeft !== 'auto') container.style.left = originalLeft;
+    if (originalRight && originalRight !== 'auto') container.style.right = originalRight;
+    if (originalTop && originalTop !== 'auto') container.style.top = originalTop;
+    if (originalBottom && originalBottom !== 'auto') container.style.bottom = originalBottom;
+    if (originalTransform && originalTransform !== 'none') container.style.transform = originalTransform;
+    
+    // Preserve margin properties
+    if (originalMargin && originalMargin !== '0px') {
+        container.style.margin = originalMargin;
+    } else {
+        if (originalMarginTop && originalMarginTop !== '0px') container.style.marginTop = originalMarginTop;
+        if (originalMarginRight && originalMarginRight !== '0px') container.style.marginRight = originalMarginRight;
+        if (originalMarginBottom && originalMarginBottom !== '0px') container.style.marginBottom = originalMarginBottom;
+        if (originalMarginLeft && originalMarginLeft !== '0px') container.style.marginLeft = originalMarginLeft;
+    }
+    
+    // Preserve width/height - use percentage if original was percentage
+    if (originalWidth && originalWidth !== 'auto' && originalWidth.includes('%')) {
+        container.style.width = originalWidth;
+    } else if (containerWidth > 0) {
         container.style.width = containerWidth + "px";
+    }
+    if (originalHeight && originalHeight !== 'auto' && originalHeight.includes('%')) {
+        container.style.height = originalHeight;
+    } else if (containerHeight > 0) {
         container.style.height = containerHeight + "px";
     }
+    
+    // Reset positioning on inner element
+    textElement.style.position = 'static';
+    textElement.style.left = 'auto';
+    textElement.style.right = 'auto';
+    textElement.style.top = 'auto';
+    textElement.style.bottom = 'auto';
+    textElement.style.transform = 'none';
+    textElement.style.margin = '0';
     
     // Don't hide text yet - wait until WebGL is ready
 
@@ -69,7 +119,7 @@ function initTextDistortionForElement(selector) {
         alpha: 0.08,
         dissipation: 0.965,
         distortionStrength: parseFloat(container.dataset.distortionStrength) || 0.08,
-        chromaticAberration: 0.004,
+        chromaticAberration: 0.0,
         chromaticSpread: 5,
         velocityScale: 0.6,
         velocityDamping: 0.85,
@@ -206,6 +256,54 @@ function initTextDistortionForElement(selector) {
         );
     }
     
+    function renderTextWithSuperscripts(element, ctx, startX, baseY, baseFontSize, fontWeight, fontFamily, color, textAlign, canvasWidth) {
+        // Clone the element to work with its structure
+        const clone = element.cloneNode(true);
+        
+        // Set base font
+        ctx.font = `${fontWeight} ${baseFontSize} ${fontFamily}`;
+        ctx.fillStyle = color;
+        ctx.textBaseline = "alphabetic";
+        ctx.textAlign = "left";
+        
+        let x = startX;
+        const superscriptFontSize = parseFloat(baseFontSize) * 0.5; // 0.5em as per CSS
+        // Smaller vertical offset for superscript to match CSS vertical-align: super
+        const superscriptOffset = parseFloat(baseFontSize) * 0.3;
+        
+        // Recursively process child nodes
+        function processNode(node) {
+            if (node.nodeType === Node.TEXT_NODE) {
+                // Regular text node
+                const text = node.textContent;
+                if (text) {
+                    ctx.font = `${fontWeight} ${baseFontSize} ${fontFamily}`;
+                    ctx.fillText(text, x, baseY);
+                    const metrics = ctx.measureText(text);
+                    x += metrics.width;
+                }
+            } else if (node.nodeType === Node.ELEMENT_NODE) {
+                // Element node - check if it's a superscript
+                if (node.tagName === 'SUP' || node.classList.contains('tm')) {
+                    // Render superscript text
+                    const supText = node.textContent;
+                    if (supText) {
+                        ctx.font = `${fontWeight} ${superscriptFontSize}px ${fontFamily}`;
+                        ctx.fillText(supText, x, baseY - superscriptOffset);
+                        const metrics = ctx.measureText(supText);
+                        x += metrics.width;
+                    }
+                } else {
+                    // Process child nodes recursively
+                    Array.from(node.childNodes).forEach(child => processNode(child));
+                }
+            }
+        }
+        
+        // Process all child nodes
+        Array.from(clone.childNodes).forEach(child => processNode(child));
+    }
+    
     function renderTextFallback() {
         // Get computed styles
         const computedStyle = window.getComputedStyle(textElement);
@@ -230,30 +328,34 @@ function initTextDistortionForElement(selector) {
             }
         }
         
-        // Use textContent which will include superscript text (like "Encore™ Series")
-        const textContent = textElement.textContent || textElement.innerText;
-
+        // Check if element has superscripts or other HTML formatting
+        const hasSuperscripts = textElement.querySelector('sup') !== null;
+        
         // Create offscreen canvas for text rendering
         textCanvas = document.createElement("canvas");
         textCtx = textCanvas.getContext("2d");
 
-        // First, set font to measure text accurately
-        textCtx.font = `${fontWeight} ${fontSize} ${fontFamily}`;
-        const textMetrics = textCtx.measureText(textContent);
+        // ALWAYS use the original element dimensions for text canvas
+        // This is critical for elements with width: 100% or large font sizes
+        let textWidth = originalElementRect.width;
+        let textHeight = originalElementRect.height;
         
-        // Get actual text dimensions
-        const actualTextWidth = textMetrics.width;
-        const lineHeight = parseFloat(computedStyle.lineHeight) || parseFloat(fontSize) * 1.2;
-        const actualTextHeight = lineHeight;
+        // If dimensions are 0, measure text as fallback
+        if (textWidth === 0 || textHeight === 0) {
+            const textContent = textElement.textContent || textElement.innerText;
+            textCtx.font = `${fontWeight} ${fontSize} ${fontFamily}`;
+            const textMetrics = textCtx.measureText(textContent);
+            const actualTextWidth = textMetrics.width;
+            const lineHeight = parseFloat(computedStyle.lineHeight) || parseFloat(fontSize) * 1.2;
+            const actualTextHeight = lineHeight;
+            
+            if (textWidth === 0) textWidth = actualTextWidth || 100;
+            if (textHeight === 0) textHeight = actualTextHeight || 50;
+        }
         
-        // Use the larger of: original element size or actual text size
-        // This ensures we capture the full text even if element has extra space
-        let textWidth = Math.max(originalElementRect.width || 0, actualTextWidth);
-        let textHeight = Math.max(originalElementRect.height || 0, actualTextHeight);
-        
-        // Fallback if both are 0
-        if (textWidth === 0) textWidth = actualTextWidth || 100;
-        if (textHeight === 0) textHeight = actualTextHeight || 50;
+        // Ensure we have valid dimensions
+        if (textWidth === 0) textWidth = 100;
+        if (textHeight === 0) textHeight = 50;
 
         // Set canvas size to match container exactly
         const scale = window.devicePixelRatio || 2; // Use higher scale for better quality
@@ -264,22 +366,110 @@ function initTextDistortionForElement(selector) {
         // Clear canvas (transparent background)
         textCtx.clearRect(0, 0, textWidth, textHeight);
 
-        // Set text properties again after scaling
-        textCtx.font = `${fontWeight} ${fontSize} ${fontFamily}`;
+        // Set base text properties
         textCtx.fillStyle = color;
-        textCtx.textAlign = "left";
         textCtx.textBaseline = "alphabetic";
+        textCtx.textAlign = "left";
 
-        // Position text to match original element's text position
-        // Text should start at left edge (x = 0)
-        // For Y, we need to account for the baseline
-        // The baseline is typically around 0.8 * fontSize from the top
-        const textX = 0;
-        // Calculate Y to center the text vertically based on line height
-        const textY = (textHeight - actualTextHeight) / 2 + parseFloat(fontSize) * 0.8;
+        // Calculate base Y position for text
+        // Get padding values (but most elements won't have padding)
+        const paddingTop = parseFloat(computedStyle.paddingTop) || 0;
+        const paddingLeft = parseFloat(computedStyle.paddingLeft) || 0;
+        const paddingRight = parseFloat(computedStyle.paddingRight) || 0;
+        const lineHeight = parseFloat(computedStyle.lineHeight) || parseFloat(fontSize) * 1.2;
+        textCtx.font = `${fontWeight} ${fontSize} ${fontFamily}`;
         
-        // Draw text
-        textCtx.fillText(textContent, textX, textY);
+        // Calculate content area (excluding padding)
+        const contentWidth = textWidth - paddingLeft - paddingRight;
+        const contentHeight = textHeight - paddingTop - (parseFloat(computedStyle.paddingBottom) || 0);
+        
+        // For alphabetic baseline, center text vertically
+        // Use a simpler calculation: center of content area + baseline adjustment
+        const baseTextY = paddingTop + (contentHeight / 2) + (parseFloat(fontSize) * 0.35);
+        
+        // Check text-align property
+        const textAlign = computedStyle.textAlign || 'left';
+        let currentX = 0; // Start at 0, will add padding only if needed
+        
+        if (textAlign === 'center') {
+            textCtx.textAlign = 'center';
+            // Will calculate center position after measuring all text
+        } else if (textAlign === 'right') {
+            textCtx.textAlign = 'right';
+            // Will calculate right position after measuring all text
+        } else {
+            textCtx.textAlign = 'left';
+            currentX = paddingLeft; // Only add padding if it exists
+        }
+
+        // Render text with superscripts if present
+        if (hasSuperscripts) {
+            // First measure total width for centering/right alignment
+            let totalWidth = 0;
+            const clone = textElement.cloneNode(true);
+            textCtx.font = `${fontWeight} ${fontSize} ${fontFamily}`;
+            const superscriptFontSize = parseFloat(fontSize) * 0.5;
+            
+            function measureNode(node) {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    const text = node.textContent;
+                    if (text) {
+                        textCtx.font = `${fontWeight} ${fontSize} ${fontFamily}`;
+                        totalWidth += textCtx.measureText(text).width;
+                    }
+                } else if (node.nodeType === Node.ELEMENT_NODE) {
+                    if (node.tagName === 'SUP' || node.classList.contains('tm')) {
+                        const supText = node.textContent;
+                        if (supText) {
+                            textCtx.font = `${fontWeight} ${superscriptFontSize}px ${fontFamily}`;
+                            totalWidth += textCtx.measureText(supText).width;
+                        }
+                    } else {
+                        Array.from(node.childNodes).forEach(child => measureNode(child));
+                    }
+                }
+            }
+            Array.from(clone.childNodes).forEach(child => measureNode(child));
+            
+            // Calculate starting X based on alignment
+            // Account for padding in the content area
+            const contentWidth = textWidth - paddingLeft - paddingRight;
+            let startX = paddingLeft; // Default to padding for left align
+            
+            if (textAlign === 'center') {
+                startX = paddingLeft + (contentWidth - totalWidth) / 2;
+            } else if (textAlign === 'right') {
+                startX = paddingLeft + contentWidth - totalWidth;
+            } else {
+                // Left align - start at padding
+                startX = paddingLeft;
+            }
+            
+            // Render text with superscripts
+            renderTextWithSuperscripts(textElement, textCtx, startX, baseTextY, fontSize, fontWeight, fontFamily, color, textAlign, textWidth);
+        } else {
+            // Simple text rendering without superscripts
+            const textContent = textElement.textContent || textElement.innerText;
+            textCtx.font = `${fontWeight} ${fontSize} ${fontFamily}`;
+            
+            // Calculate text X position accounting for padding
+            const contentWidth = textWidth - paddingLeft - paddingRight;
+            let textX = currentX;
+            
+            if (textAlign === 'center') {
+                const textMetrics = textCtx.measureText(textContent);
+                textX = paddingLeft + (contentWidth / 2);
+                textCtx.textAlign = 'center';
+            } else if (textAlign === 'right') {
+                textX = paddingLeft + contentWidth;
+                textCtx.textAlign = 'right';
+            } else {
+                // Left align - use currentX which already includes padding
+                textX = currentX;
+            }
+            
+            textCtx.fillText(textContent, textX, baseTextY);
+        }
 
         // Create texture from canvas
         textTexture = new THREE.CanvasTexture(textCanvas);
@@ -289,27 +479,18 @@ function initTextDistortionForElement(selector) {
         textTexture.wrapT = THREE.ClampToEdgeWrapping;
         textTexture.needsUpdate = true;
 
-        // Container and canvas should already be sized correctly
-        // Just ensure they match the text dimensions
-        const containerWidth = originalElementRect.width || textWidth;
-        const containerHeight = originalElementRect.height || textHeight;
+        // Use the text canvas dimensions (which are based on original element size)
+        const containerWidth = textWidth;
+        const containerHeight = textHeight;
         
-        // Update container if needed
-        if (container.style.width !== containerWidth + "px") {
-            container.style.width = containerWidth + "px";
-        }
-        if (container.style.height !== containerHeight + "px") {
-            container.style.height = containerHeight + "px";
-        }
+        // Update container to match text canvas size exactly
+        container.style.width = containerWidth + "px";
+        container.style.height = containerHeight + "px";
 
         // Update WebGL canvas size to match container exactly
         const canvasScale = window.devicePixelRatio || 1;
-        if (canvas.width !== containerWidth * canvasScale) {
-            canvas.width = containerWidth * canvasScale;
-        }
-        if (canvas.height !== containerHeight * canvasScale) {
-            canvas.height = containerHeight * canvasScale;
-        }
+        canvas.width = containerWidth * canvasScale;
+        canvas.height = containerHeight * canvasScale;
         canvas.style.width = containerWidth + "px";
         canvas.style.height = containerHeight + "px";
 
