@@ -126,8 +126,8 @@ body {
   .hero__footer-wrapper {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
-    text-align: right;
+    align-items: center;
+    text-align: center;
     gap: 2rem;
   }
 }
@@ -890,7 +890,7 @@ body {
 .fifth__section {
   background: linear-gradient(to bottom, rgb(240, 236, 236) 50%, #ce9c9c);
   position: relative;
-  
+
   /* min-height: 90dvh; */
   overflow: hidden;
 }
@@ -919,7 +919,6 @@ body {
 }
 
 .fifth__section__watermark {
-  
   margin-top: 8rem;
   /* form 1920 to 1024 px 288 px to 156.6px  */
   font-size: clamp(9.6rem, 0rem + 15vw, 18rem);
