@@ -262,7 +262,7 @@ body {
     align-items: center;
     justify-content: flex-end;
 
-    min-height: 65dvh;
+    min-height: 35rem;
   }
 }
 
@@ -873,7 +873,7 @@ body {
 .fifth__section {
   background: linear-gradient(to bottom, rgb(240, 236, 236) 50%, #ce9c9c);
   position: relative;
-  padding-bottom: 26rem;
+  padding-bottom: 23rem;
   /* min-height: 90dvh; */
   overflow: hidden;
 }
