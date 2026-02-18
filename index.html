@@ -8,22 +8,33 @@
   <body>
     <section class="hero">
       <div class="hero__layer-one-image-wrapper">
-        <img
-          class="hero__layer-one-image"
-          src="assets/img/hero_layerOne.jpg"
-          alt=""
-        />
+        <picture>
+          <source
+            media="(max-width: 630px)"
+            srcset="assets/img/hero_mlayer_one.png"
+          />
+
+          <img
+            class="hero__layer-one-image"
+            src="assets/img/hero_layerOne.jpg"
+            alt="Hero Background"
+          />
+        </picture>
       </div>
       <div class="hero__bgtext-wrapper">
         <p class="hero__sub-heading">PROFESSIONAL-GRADE</p>
         <h1 class="hero__heading">CERAMIC IR</h1>
       </div>
-      <div class="hero__layer-two-image-wrapper">
-        <img
-          class="hero__layer-two-image"
-          src="assets/img/hero_layerTwo.png"
-          alt=""
-        />
+<div class="hero__layer-two-image-wrapper">
+        <picture>
+          <source media="(max-width: 630px)" srcset="assets/img/hero_mlayertwo.png" />
+          
+          <img
+            class="hero__layer-two-image"
+            src="assets/img/hero_layerTwo.png"
+            alt="Hero Foreground"
+          />
+        </picture>
       </div>
       <div class="hero__layer-two-content-wrapper">
         <div class="hero__logo-wrapper">
@@ -65,15 +76,12 @@
               rejection, UV protection, and glare reduction — without metals or
               interference.
             </p>
-            <p style="margin-top: 1rem;" class="section__second__content">
+            <p style="margin-top: 1rem" class="section__second__content">
               Designed for predictable installs and consistent results, it’s the
               product installers rely on with confidence.
             </p>
           </div>
-          <button
-            style=""
-            class="hero__footer-cta second__section__cta"
-          >
+          <button style="" class="hero__footer-cta second__section__cta">
             <p style="">Discover the Difference</p>
             <div class="cta-arrow">
               <img class="cta-img" src="assets/img/cta_icon.svg" alt="" />
