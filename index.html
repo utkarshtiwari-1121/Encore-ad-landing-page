@@ -3,11 +3,73 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Avery Dennison Encore™ IR Series</title>
+  <title>Avery Dennison Encore™ Series, Automotive Window Films</title>
+  <meta name="description"
+    content="Avery Dennison Encore™ IR ceramic window films with infrared heat rejection, UV protection and clear or tinted options, delivering lasting performance">
+  <meta name="keywords"
+    content="Avery Dennison Encore™ IR ceramic window films with infrared heat rejection, UV protection and clear or tinted options, delivering lasting performance">
+  <meta name="author" content="Avery Dennison">
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow">
+  <meta name="bingbot" content="index, follow">
+  <meta name="yandexbot" content="index, follow">
+  <meta name="duckduckbot" content="index, follow">
 
-  <link rel="stylesheet"
-    href="https://lgm.averydennison.com/cdnr/aorpci4/acton/attachment/5313/f-6deea038-0347-4e60-95c8-cab27b0e279b/1/-/-/-/-/encore.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css" />
+
+
+  <!-- <link rel="stylesheet"
+    href="https://lgm.averydennison.com/cdnr/aorpci4/acton/attachment/5313/f-8f43b897-4ee5-4f87-bfa8-d72d0867c972/1/-/-/-/-/style.css" /> -->
+    <link rel="stylesheet" href="style.css">
+  
+  <!-- SVG Filter for Glass Distortion Effect -->
+  <svg width="0" height="0" style="position: absolute;">
+    <defs>
+      <filter id="glass-distortion" x="0%" y="0%" width="100%" height="100%">
+        <feTurbulence 
+          type="fractalNoise" 
+          baseFrequency="0.012 0.012"
+          numOctaves="2" 
+          seed="92" 
+          result="noise" 
+        />
+        <feGaussianBlur 
+          in="noise" 
+          stdDeviation="2" 
+          result="blurred" 
+        />
+        <feDisplacementMap 
+          in="SourceGraphic" 
+          in2="blurred" 
+          scale="85"
+          xChannelSelector="R" 
+          yChannelSelector="G" 
+        />
+      </filter>
+      <!-- SVG Filter for Form Glass Distortion Effect -->
+      <filter id="glass-distortion-form" x="0%" y="0%" width="100%" height="100%">
+        <feTurbulence 
+          type="fractalNoise" 
+          baseFrequency="0.006 0.006"
+          numOctaves="2" 
+          seed="92" 
+          result="noise" 
+        />
+        <feGaussianBlur 
+          in="noise" 
+          stdDeviation="2" 
+          result="blurred" 
+        />
+        <feDisplacementMap 
+          in="SourceGraphic" 
+          in2="blurred" 
+          scale="45"
+          xChannelSelector="R" 
+          yChannelSelector="G" 
+        />
+      </filter>
+    </defs>
+  </svg>
 </head>
 
 <body>
@@ -18,7 +80,7 @@
           srcset="https://lgm.averydennison.com/cdnr/aorpci4/acton/attachment/5313/f-bdaaf9e6-1124-48e5-8129-44401f027827/1/-/-/-/-/hero_mlayer_one.jpg" />
 
         <img class="hero__layer-one-image"
-          src="https://lgm.averydennison.com/acton/attachment/5313/f-b0d77952-6669-4036-801b-529de18a3445/1/-/-/-/-/hero_layerOne.webp"
+          src="https://lgm.averydennison.com/acton/attachment/5313/f-c95be725-d8d3-4c36-87eb-bbe73e8097c0/1/-/-/-/-/image%20layer%20bottom.webp"
           alt="Hero Background" />
       </picture>
     </div>
@@ -38,7 +100,7 @@
           srcset="https://lgm.averydennison.com/acton/attachment/5313/f-9067814a-ca62-4b4f-b03f-b24c232ffb63/1/-/-/-/-/hero_mlayertwo.webp" />
 
         <img class="hero__layer-two-image"
-          src="https://lgm.averydennison.com/acton/attachment/5313/f-28935c0a-2f93-4127-8d87-5bf063fba7a3/1/-/-/-/-/hero_layerTwo.webp"
+          src="https://lgm.averydennison.com/acton/attachment/5313/f-d23ba2f3-855e-4a87-a448-e8b41765df45/1/-/-/-/-/hero_layerTwo%20%281%29.webp"
           alt="Hero Foreground" />
       </picture>
     </div>
@@ -82,22 +144,22 @@
       </picture>
       <div class="section__second__content-wrapper">
         <div>
-          <h2 class="section__second__heading">
+          <h2 animate-on-scroll class="section__second__heading">
             Trusted by Professional Installers
           </h2>
         </div>
         <div class="section__second__content-wrapper-inner">
-          <p class="section__second__content">
+          <p animate-on-scroll class="section__second__content">
             Our ceramic IR window films deliver advanced infrared heat
-            rejection, UV protection, and glare reduction — without metals or
+            rejection, UV protection, and glare reduction - without metals or
             interference.
           </p>
-          <p style="margin-top: 1rem" class="section__second__content">
+          <p animate-on-scroll style="margin-top: 1rem" class="section__second__content">
             Designed for predictable installs and consistent results, it’s the
             product installers rely on with confidence.
           </p>
         </div>
-        <button style="" class="hero__footer-cta second__section__cta ctaa">
+        <button animate-on-scroll style="" class="hero__footer-cta second__section__cta ctaa">
           <p style="">Discover the Difference</p>
           <div class="cta-arrow">
             <img class="cta-img"
@@ -113,13 +175,9 @@
     <div class="swiper-wrapper" style="height: auto;">
       <div class="third__section__container swiper-slide">
         <div class="third__section__header-wrapper">
-          <p class="third__section__header-content-one">Choose Your Film</p>
-          <!-- </div> -->
-          <h2 class="third__section__header-content-two">Encore™ Supreme IR</h2>
-
-          <div class="third__section_middle_main-wrapper" style="">
-
-
+          <p  class="third__section__header-content-one">Choose Your Film</p>        <!-- </div> -->
+          <h2  class="third__section__header-content-two">Encore™ Supreme IR</h2>
+          <div  class="third__section_middle_main-wrapper" style="">
             <div class="third__section__image-wrapper">
               <img class="third__section__image"
                 src="https://lgm.averydennison.com/acton/attachment/5313/f-542379eb-7732-4add-8def-bd342405d671/1/-/-/-/-/section_third.webp"
@@ -128,31 +186,26 @@
               <button class="hero__footer-cta third__section__explore-btn ctaa">
                 <p style="">Explore</p>
                 <div class="cta-arrow">
-                  <img class="cta-img"
-                    src="https://lgm.averydennison.com/cdnr/aorpci4/acton/attachment/5313/f-ed227855-783d-4c23-a24c-361034f31c87/1/-/-/-/-/cta_icon.svg"
-                    alt="" />
+                  <img class="cta-img" src="https://lgm.averydennison.com/cdnr/aorpci4/acton/attachment/5313/f-ed227855-783d-4c23-a24c-361034f31c87/1/-/-/-/-/cta_icon.svg" alt="" />
                 </div>
               </button>
             </div>
 
 
           </div>
-          <div class="third__section__features">
+          <div  class="third__section__features">
             <div class="third__section__feature">
               Up to 93% Selective <br> Infrared Rejection
             </div>
             <div class="third__section__feature third__section__feature--middle">
-              Deep-Shaded Ceramic IR <br> for added privacy
+              <strong style="font-weight: 600;">Deep-Shaded</strong> Ceramic IR <br> for added privacy
             </div>
             <div class="third__section__feature">
               Rejects up to 65% <br> Total Solar Energy
             </div>
           </div>
         </div>
-
-
-
-        <ul class="third__section__options">
+        <ul  class="third__section__options">
           <li>
             <button class="third__section__card">05%</button>
           </li>
@@ -193,20 +246,18 @@
               Rejects up to 45% <br> Total Solar Energy
             </div>
             <div class="third__section__feature third__section__feature--middle">
-              <strong>Virtually clear</strong>, ideal for windshields, <br> sunroofs & privacy glass.
+              <strong style="font-weight: 600;">Virtually clear</strong>, ideal for windshields, <br> sunroofs & privacy
+              glass.
             </div>
             <div class="third__section__feature">
               Up to 88% Selective <br> Infrared Rejection
             </div>
           </div>
         </div>
-
-
         <ul class="third__section__options">
           <li>
             <button class="third__section__card" style="background-color: rgba(0, 0, 0, 0.2);">80%</button>
           </li>
-
         </ul>
       </div>
     </div>
@@ -229,21 +280,21 @@
   <section class="fourth__section">
     <picture>
       <source media="(max-width: 630px)"
-        srcset="https://lgm.averydennison.com/cdnr/aorpci4/acton/attachment/5313/f-92efd84c-21ff-44f3-a013-289725661e06/1/-/-/-/-/sec_4_img_mob_.jpg" />
+        srcset="https://lgm.averydennison.com/acton/attachment/5313/f-e6ad98b0-2b20-42d9-b356-c3272d4861d1/1/-/-/-/-/sec_4_img_mob_.webp" />
       <img class="fourth__section__bg-image"
-        src="https://lgm.averydennison.com/acton/attachment/5313/f-93943f2b-32fd-4b24-b571-63f75365e48e/1/-/-/-/-/thirdSection.webp"
+        src="https://lgm.averydennison.com/acton/attachment/5313/f-fdc28b90-4bd0-482f-add9-a1699a5d723d/1/-/-/-/-/thirdSection%20%281%29.webp"
         alt="Hero Background" />
     </picture>
 
 
     <div class="fourth__section__container">
       <div class="fourth__section__content">
-        <h2 class="fourth__section__heading">Trusted Protection,</h2>
-        <h2 class="fourth__section__heading sub">Backed by Science.</h2>
+        <h2 class="fourth__section__heading" animate-on-scroll-third>Trusted Protection,</h2>
+        <h2 class="fourth__section__heading sub" animate-on-scroll-third>Backed by Science.</h2>
 
         <!-- </div> -->
         <div class="fourth__section__grid">
-          <div class="fourth__section__grid-item one">
+          <div animate-on-scroll-third class="fourth__section__grid-item one">
             <div class="fourth__section__icon">
               <img
                 src="https://lgm.averydennison.com/cdnr/aorpci4/acton/attachment/5313/f-a7911746-0f2c-48d8-bb87-b2ea8437349c/1/-/-/-/-/installer.svg"
@@ -251,7 +302,7 @@
             </div>
             <p>Installer-friendly for smooth, precise application</p>
           </div>
-          <div class="fourth__section__grid-item two">
+          <div animate-on-scroll-third class="fourth__section__grid-item two">
             <div class="fourth__section__icon">
               <img
                 src="https://lgm.averydennison.com/cdnr/aorpci4/acton/attachment/5313/f-010806ce-3067-4e28-8a8d-bbe389a4371a/1/-/-/-/-/warranty.svg"
@@ -259,7 +310,7 @@
             </div>
             <p>Limited Lifetime Warranty</p>
           </div>
-          <div class="fourth__section__grid-item three">
+          <div animate-on-scroll-third class="fourth__section__grid-item three">
             <div class="fourth__section__icon">
               <img
                 src="https://lgm.averydennison.com/cdnr/aorpci4/acton/attachment/5313/f-cbebbe4a-e7f7-4a66-8fa1-4b9077a356e4/1/-/-/-/-/wifi.svg"
@@ -267,7 +318,7 @@
             </div>
             <p>Metal-free construction no signal interference</p>
           </div>
-          <div class="fourth__section__grid-item four">
+          <div animate-on-scroll-third class="fourth__section__grid-item four">
             <div class="fourth__section__icon">
               <img
                 src="https://lgm.averydennison.com/cdnr/aorpci4/acton/attachment/5313/f-ccd15f21-5061-4101-88d9-50ba882778e4/1/-/-/-/-/ici-solar-energy-rejection%202.svg"
@@ -277,7 +328,7 @@
           </div>
         </div>
 
-        <button class="hero__footer-cta fourth__section__cta ctaa">
+        <button animate-on-scroll-third class="hero__footer-cta fourth__section__cta ctaa">
           <p style="color: white">Explore the Series</p>
           <div class="cta-arrow">
             <img class="cta-img"
@@ -296,17 +347,18 @@
   </section>
 
   <section class="fifth__section">
+    <div class="layer_one"></div>
     <div class="fifth__section__container">
-      <h2 class="fifth__section__heading">
+      <h2 animate-on-scroll-four class="fifth__section__heading">
         The Encore<sup class="tm">™</sup> Advantage
       </h2>
-      <p class="fifth__section__description">
+      <p animate-on-scroll-four class="fifth__section__description">
         Backed by expertise and innovation, our ceramic IR window film
         portfolio delivers trusted performance, installer confidence, and
         long-term reliability — all in one complete system.
       </p>
 
-      <button class="hero__footer-cta fifth__section__explore-btn ctaa">
+      <button animate-on-scroll-four class="hero__footer-cta fifth__section__explore-btn ctaa">
         <p style="">Request Your Sample Pack</p>
         <div class="cta-arrow">
           <img class="cta-img"
@@ -319,7 +371,9 @@
     </div>
 
     <div class="fifth__section__watermark">
-      Encore<sup class="tm">™</sup> Series
+      <img
+        src="https://lgm.averydennison.com/acton/attachment/5313/f-579a59d0-9cd5-4dc5-b906-8aa5b8608dfe/1/-/-/-/-/encore_new.webp"
+        alt="">
     </div>
   </section>
 
@@ -370,11 +424,27 @@
     </div>
   </footer>
 
-  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script> -->
+
+  <div id="form_container">
+    <div id="form_content" data-lenis-prevent>
+      <img class="close_icon"
+        src="https://lgm.averydennison.com/cdnr/aorpci4/acton/attachment/5313/f-9900f436-7969-433a-95fa-062478a793b6/1/-/-/-/-/close.png"
+        alt="">
+      <script type="text/javascript">var aoAdBlockDetected = true;</script>
+      <script type="text/javascript" src="//lgm.averydennison.com/acton/content/aoAdDetect.js"></script>
+      <script
+        type="text/javascript">window.addEventListener("load", function () { if (aoAdBlockDetected) { var t = document.createElement("div"), o = document.createElement("div"), e = document.createElement("div"), n = document.createElement("div"), d = document.createElement("button"), i = "<h1 style=\"text-align: center; line-height: 21px; color: #444444;\"><span style=\"font-family: 'helvetica neue', helvetica, arial, sans-serif;\"><strong style=\"font-weight: bold;\"><span style=\"white-space: pre-wrap; font-size: 18pt;\">It looks like you’re using an AdBlocker</span></strong></span></h1> <p style=\"text-align: center; line-height: 20px; color: #444444;\"><span style=\"font-family: 'helvetica neue', helvetica, arial, sans-serif; color: #767676;\"><span style=\"white-space: pre-wrap; font-size: 18pt;\"><span style=\"white-space: pre-wrap;\"><span style=\"font-size: 14pt;\">Some of the forms and images on this page may not work correctly with this enabled. Please disable your ad blocker for this page.</span> </span></span></span></p> <p style=\"text-align: left; line-height: 20px; color: #444444;\"><span style=\"font-size: 14pt;\"><strong style=\"font-weight: 500;\"><span style=\"font-family: 'helvetica neue', helvetica, arial, sans-serif;\"><span style=\"white-space: pre-wrap;\"><span style=\"white-space: pre-wrap;\">Instructions</span></span></span></strong></span></p> <p style=\"text-align: left; line-height: 20px; color: #444444;\"><span style=\"font-size: 14pt;\"><strong style=\"font-weight: 500;\"><span style=\"font-family: 'helvetica neue', helvetica, arial, sans-serif;\"><span style=\"white-space: pre-wrap;\"><span style=\"white-space: pre-wrap;\">1. Find the ad blocker icon installed on your browser.</span></span></span></strong></span></p> <p style=\"text-align: left; line-height: 20px; color: #444444;\"><span style=\"font-size: 14pt;\"><span style=\"font-family: 'helvetica neue', helvetica, arial, sans-serif;\"><span style=\"white-space: pre-wrap;\"><span style=\"white-space: pre-wrap;\">This icon is usually located on the upper right side of your screen. You may have more than one ad blocker installed.</span></span></span></span></p> <p style=\"text-align: left; line-height: 20px; color: #444444;\"><strong style=\"font-weight: 500;\"><span style=\"font-size: 14pt;\"><span style=\"font-family: 'helvetica neue', helvetica, arial, sans-serif;\"><span style=\"white-space: pre-wrap;\"><span style=\"white-space: pre-wrap;\">2. Click the icon and disable the ad blocker for this website.</span></span></span></span></strong></p> <p style=\"text-align: left; line-height: 20px; color: #444444;\"><strong style=\"font-weight: 500;\"><span style=\"font-size: 14pt;\"><span style=\"font-family: 'helvetica neue', helvetica, arial, sans-serif;\"><span style=\"white-space: pre-wrap;\"><span style=\"white-space: pre-wrap;\">3. Refresh this website page, either by following prompts or clicking your browser’s “refresh” or “reload” button.</span></span></span></span></strong></p>"; t.style.cssText = "position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:1000;background:red;background: rgba(0,0,0,0.3);", o.style.cssText = "position: fixed; top: 50%; left: 50%; width: 600px; max-width: 80vw; transform: translate(-50%, -50%) !important; background: #ffffff; border-width: 1px; border-radius: 4px; border-color: #444444; border-style: solid; max-height: 80vh; overflow: auto; padding: 24px 56px 0 56px;", o.innerHTML = i, n.style.cssText = "margin-top: 36px; margin-bottom: 24px; text-align: center;", o.appendChild(n), d.innerHTML = "Refresh Page", d.style.cssText = "cursor: pointer; padding: 12px 24px; background: #FFFFFF; border-width: 1px; color: #444444; border-color: #444444; border-radius: 4px;", n.appendChild(d), d.addEventListener("click", function () { window.location.reload() }), e.style.cssText = "position: absolute; right: 25px; top: 25px; cursor: pointer; font-size: 14px; line-height: 14px; color: #444444", e.innerHTML = "&#10005;", e.addEventListener("click", function () { o.parentNode.removeChild(o), t.parentNode.removeChild(t) }), document.body.appendChild(t), t.appendChild(o), o.appendChild(e) } });</script>
+      <script type="text/javascript"
+        id="aoform-script-a2e71a7c-81e3-4cfd-8f45-df6bc1ffad01:d-0001">!function (o, t, e, a) { o._aoForms = o._aoForms || [], o._aoForms.push(a); var n = function () { var o = t.createElement(e); o.src = ("https:" == t.location.protocol ? "https://" : "http://") + "lgm.averydennison.com/acton/content/form_embed.js", o.async = !0; for (var a = t.getElementsByTagName(e)[0], n = a.parentNode, c = document.getElementsByTagName("script"), r = !1, s = 0; s < c.length; s++) { if (c[s].getAttribute("src") == o.getAttribute("src")) r = !0; } r ? typeof (_aoFormLoader) != "undefined" ? _aoFormLoader.load({ id: "a2e71a7c-81e3-4cfd-8f45-df6bc1ffad01:d-0001", accountId: "5313", domain: "lgm.averydennison.com", isTemp: false, noStyle: true, prefill: false }) : "" : n.insertBefore(o, a) }; window.attachEvent ? window.attachEvent("onload", n) : window.addEventListener("load", n, !1), n() }(window, document, "script", { id: "a2e71a7c-81e3-4cfd-8f45-df6bc1ffad01", accountId: "5313", domain: "lgm.averydennison.com", isTemp: false, noStyle: true, prefill: false });</script>
+    </div>
+  </div>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
   <script src="https://unpkg.com/lenis@1.3.17/dist/lenis.min.js"></script>
-  <script
-    src="https://lgm.averydennison.com/cdnr/aorpci4/acton/attachment/5313/f-8e23d3c1-9af4-4a00-ae11-50852c360d9e/1/-/-/-/-/encore-cursor.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/ScrollTrigger.min.js"></script>
 
   <script>
     const swiper = new Swiper('.swiper', {
@@ -382,13 +452,13 @@
       direction: 'horizontal',
       loop: false,
       slidesPerView: 1,
-      spaceBetween: 50,
+      spaceBetween: 0,
       centeredSlides: true,
-
+      speed: 1000,
       breakpoints: {
         1024: {
-          slidesPerView: 1.2,
-          spaceBetween: 50,
+          slidesPerView: 1.5,
+          spaceBetween: 0,
           centeredSlides: true,
         },
       },
@@ -410,13 +480,18 @@
 
     // Listen for the scroll event and log the event data
     lenis.on('scroll', (e) => {
-      console.log(e);
+      // console.log(e);
     });
   </script>
 
-  <!-- <script src="shaders.js"></script>
-  <script src="script.js"></script> -->
-  <!-- <script src="button-follow.js"></script> -->
+
+
+  <script
+    src="https://lgm.averydennison.com/cdnr/aorpci4/acton/attachment/5313/f-19dbe299-b622-45b7-8ed8-57f2fda2b9e0/1/-/-/-/-/shaders.js"></script>
+  
+
+    <script src="script.js"></script>
+    <script src="button-follow.js"></script>
 </body>
 
 </html>

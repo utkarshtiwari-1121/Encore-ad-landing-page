@@ -116,46 +116,30 @@ const distortionFragment = `
             return;
         }
         
-        vec3 color = vec3(r, g, b);
+        // Preserve original colors - use center sample when no distortion
+        vec3 color = centerSample.rgb;
         
-        float totalBrightness = r + g + b;
-        if (totalBrightness < 0.05 && isWithinImageBounds(distortedUv)) {
-            color = centerSample.rgb;
+        // Only apply chromatic aberration when there's significant flow
+        if (flowMagnitude > 0.01 && uChromaticAberration > 0.0) {
+            // Use chromatic aberration colors only if they're valid
+            float totalBrightness = r + g + b;
+            if (totalBrightness > 0.05) {
+                color = vec3(r, g, b);
+            }
         }
         
-        if (flowMagnitude > 0.01) {
-            float threshold = 0.05;
-            if (r > threshold && r > g + 0.1 && r > b + 0.1) {
-                color.r = min(1.0, r * 1.8);
-                color.g *= 0.8;
-                color.b *= 0.8;
-            }
-            if (g > threshold && g > r + 0.1 && g > b + 0.1) {
-                color.g = min(1.0, g * 1.6);
-                color.r *= 0.8;
-                color.b *= 0.8;
-            }
-            if (b > threshold && b > r + 0.1 && b > g + 0.1) {
-                color.b = min(1.0, b * 2.0);
-                color.r *= 0.8;
-                color.g *= 0.8;
-            }
-            
-            float glowStrength = flow.b * 0.15;
-            color += color * glowStrength;
+        // Minimal color enhancement only on strong flow to preserve original colors
+        if (flowMagnitude > 0.1) {
+            // Very subtle enhancement, preserve original color balance
+            float enhancement = flowMagnitude * 0.1;
+            color = mix(centerSample.rgb, color, enhancement);
         }
         
         vec4 currentColor = vec4(color, alpha);
         
-        if (!uIsFirstFrame) {
-            vec4 previousColor = texture2D(uPreviousFrame, uv);
-            float motionAmount = smoothstep(uMotionBlurThreshold, uMotionBlurThreshold + 0.05, flowMagnitude);
-            float blurStrength = motionAmount * uMotionBlurStrength;
-            vec3 blendedColor = mix(currentColor.rgb, previousColor.rgb, blurStrength * uMotionBlurDecay);
-            float blendedAlpha = max(currentColor.a, previousColor.a * uMotionBlurDecay);
-            currentColor = vec4(blendedColor, blendedAlpha);
-        }
-        
+        // Completely disable motion blur blending to prevent color fading
+        // Only use current frame color, never blend with previous frames
+        // This ensures colors stay accurate and don't fade over time
         gl_FragColor = currentColor;
     }
 `;

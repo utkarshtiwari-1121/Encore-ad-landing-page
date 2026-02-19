@@ -113,10 +113,10 @@ function initTextDistortionForElement(selector) {
     
     // Don't hide text yet - wait until WebGL is ready
 
-    // Settings
+    // Settings - will be adjusted for images
     const settings = {
         falloff: 0.18,
-        alpha: 0.08,
+        alpha: 0.1,
         dissipation: 0.965,
         distortionStrength: parseFloat(container.dataset.distortionStrength) || 0.08,
         chromaticAberration: 0.0,
@@ -124,10 +124,17 @@ function initTextDistortionForElement(selector) {
         velocityScale: 0.6,
         velocityDamping: 0.85,
         mouseRadius: 0.18,
-        motionBlurStrength: 0.35,
-        motionBlurDecay: 0.88,
+        motionBlurStrength: 0.2, // Reduced to preserve color accuracy
+        motionBlurDecay: 0.9, // Increased to reduce fading
         motionBlurThreshold: 0.5
     };
+    
+    // For image elements, disable motion blur to prevent color fading
+    const imgElement = textElement.querySelector('img');
+    if (imgElement) {
+        settings.motionBlurStrength = 0.0; // Disable motion blur for images
+        settings.dissipation = 0.99; // Increase dissipation to reduce flow accumulation and prevent fading
+    }
 
     // Three.js setup
     const scene = new THREE.Scene();
@@ -135,10 +142,12 @@ function initTextDistortionForElement(selector) {
     const renderer = new THREE.WebGLRenderer({
         canvas: canvas,
         alpha: true,
-        antialias: false,
-        preserveDrawingBuffer: false
+        antialias: true,
+        preserveDrawingBuffer: false,
+        powerPreference: "high-performance"
     });
     renderer.setClearColor(0, 0);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
     // Mouse tracking
     const mouse = {
@@ -155,6 +164,7 @@ function initTextDistortionForElement(selector) {
     let isFirstFrame = true;
     let textCanvas, textCtx;
     let originalElementRect = originalRect; // Store original dimensions
+    let isImageElement = false; // Track if this is an image element
 
     function renderTextToCanvas() {
         // Check if element contains an image
@@ -162,9 +172,11 @@ function initTextDistortionForElement(selector) {
         
         if (imgElement) {
             // Handle image element
+            isImageElement = true;
             loadImageTexture(imgElement);
         } else {
             // Handle text element
+            isImageElement = false;
             renderTextFallback();
         }
     }
@@ -216,10 +228,21 @@ function initTextDistortionForElement(selector) {
             // onLoad
             function(texture) {
                 textTexture = texture;
-                textTexture.minFilter = THREE.LinearFilter;
+                // Use better filters for higher quality
+                textTexture.minFilter = THREE.LinearMipmapLinearFilter;
                 textTexture.magFilter = THREE.LinearFilter;
                 textTexture.wrapS = THREE.ClampToEdgeWrapping;
                 textTexture.wrapT = THREE.ClampToEdgeWrapping;
+                // Generate mipmaps for better quality
+                textTexture.generateMipmaps = true;
+                // Ensure proper color space (sRGB) - for Three.js r128 use encoding
+                if (THREE.SRGBColorSpace !== undefined) {
+                    textTexture.colorSpace = THREE.SRGBColorSpace;
+                } else if (THREE.sRGBEncoding !== undefined) {
+                    textTexture.encoding = THREE.sRGBEncoding;
+                }
+                // Ensure texture is updated
+                textTexture.needsUpdate = true;
                 
                 // Use original element dimensions for container (already set, but ensure they're correct)
                 const containerWidth = originalElementRect.width || imgElement.offsetWidth || imgElement.naturalWidth || 100;
@@ -233,8 +256,9 @@ function initTextDistortionForElement(selector) {
                     container.style.height = containerHeight + "px";
                 }
                 
-                // Update WebGL canvas size to match container exactly
-                const canvasScale = window.devicePixelRatio || 1;
+                // Update WebGL canvas size to match container with higher quality
+                // Use higher pixel ratio for better quality (max 2 for performance)
+                const canvasScale = Math.min(window.devicePixelRatio || 2, 2);
                 if (canvas.width !== containerWidth * canvasScale) {
                     canvas.width = containerWidth * canvasScale;
                 }
@@ -243,6 +267,10 @@ function initTextDistortionForElement(selector) {
                 }
                 canvas.style.width = containerWidth + "px";
                 canvas.style.height = containerHeight + "px";
+                
+                // Update renderer size and pixel ratio
+                renderer.setSize(containerWidth * canvasScale, containerHeight * canvasScale);
+                renderer.setPixelRatio(canvasScale);
                 
                 onTextureLoaded();
             },
@@ -564,20 +592,36 @@ function initTextDistortionForElement(selector) {
     }
 
     function createRenderTargets() {
-        const type = renderer.capabilities.isWebGL2 ? THREE.HalfFloatType : THREE.UnsignedByteType;
+        // Use higher precision for better color quality
+        // For WebGL2, use FloatType for maximum color accuracy (if supported)
+        let type = THREE.UnsignedByteType;
+        if (renderer.capabilities.isWebGL2) {
+            // Try to use FloatType for better color accuracy, fallback to HalfFloatType
+            const gl = renderer.getContext();
+            if (gl.getExtension('OES_texture_float_linear')) {
+                type = THREE.FloatType;
+            } else {
+                type = THREE.HalfFloatType;
+            }
+        }
         const options = {
             minFilter: THREE.LinearFilter,
             magFilter: THREE.LinearFilter,
             format: THREE.RGBAFormat,
-            type: type
+            type: type,
+            stencilBuffer: false,
+            depthBuffer: false
         };
 
         const flowmapSize = 128;
         flowmapA = new THREE.WebGLRenderTarget(flowmapSize, flowmapSize, options);
         flowmapB = new THREE.WebGLRenderTarget(flowmapSize, flowmapSize, options);
 
-        const displayWidth = Math.min(container.clientWidth, 512);
-        const displayHeight = Math.min(container.clientHeight, 512);
+        // Use higher resolution for display targets to preserve image quality
+        // Scale based on device pixel ratio for better quality
+        const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+        const displayWidth = Math.min(container.clientWidth * pixelRatio, 2048);
+        const displayHeight = Math.min(container.clientHeight * pixelRatio, 2048);
         displayA = new THREE.WebGLRenderTarget(displayWidth, displayHeight, options);
         displayB = new THREE.WebGLRenderTarget(displayWidth, displayHeight, options);
     }
@@ -683,8 +727,10 @@ function initTextDistortionForElement(selector) {
         }
 
         if (displayA && displayB) {
-            const displayWidth = Math.min(clientWidth, 512);
-            const displayHeight = Math.min(clientHeight, 512);
+            // Use higher resolution for better quality
+            const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+            const displayWidth = Math.min(clientWidth * pixelRatio, 2048);
+            const displayHeight = Math.min(clientHeight * pixelRatio, 2048);
             displayA.setSize(displayWidth, displayHeight);
             displayB.setSize(displayWidth, displayHeight);
         }
@@ -770,9 +816,10 @@ function initAllTextDistortions() {
         initTextDistortionForElement(".hero__heading");
     }, 50);
     
-    setTimeout(() => {
-        initTextDistortionForElement(".fifth__section__watermark");
-    }, 100);
+    // setTimeout(() => {
+    //     initTextDistortionForElement(".fifth__section__watermark");
+    // }, 100);
+   
 }
 
 // Initialize when DOM is loaded
@@ -791,4 +838,9 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         setTimeout(init, 300);
     }
+});
+
+
+window.addEventListener('resize', function() {
+    window.location.reload();
 });
